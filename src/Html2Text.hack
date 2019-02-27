@@ -1,10 +1,20 @@
 namespace Usox\Html2Text;
 
-final class Html2Text {
+final class Html2Text implements Html2TextInterface {
 
 	private static dict<string, bool> $default_options = dict[
 		'ignore_errors' => false,
 		'drop_links'    => false,
+	];
+
+	private static vec<string> $nbsp_codes = vec[
+		"\xc2\xa0",
+		"\u00a0",
+	];
+
+	private static vec<string> $zwnj_codes = vec[
+		"\xe2\x80\x8c",
+		"\u200c",
 	];
 
 	/**
@@ -51,9 +61,6 @@ final class Html2Text {
 	 * Unify newlines; in particular, \r\n becomes \n, and
 	 * then \r becomes \n. This means that all newlines (Unix, Windows, Mac)
 	 * all become \ns.
-	 *
-	 * @param string $text text with any number of \r, \r\n and \n combinations
-	 * @return string the fixed text
 	 */
 	public static function fixNewlines(string $text): string {
 		// replace \r\n to \n
@@ -64,25 +71,8 @@ final class Html2Text {
 		return $text;
 	}
 
-	public static function nbspCodes(): vec<string> {
-		return vec[
-			"\xc2\xa0",
-			"\u00a0",
-		];
-	}
-
-	public static function zwnjCodes(): vec<string> {
-		return vec[
-			"\xe2\x80\x8c",
-			"\u200c",
-		];
-	}
-
 	/**
 	 * Remove leading or trailing spaces and excess empty lines from provided multiline text
-	 *
-	 * @param string $text multiline text any number of leading or trailing spaces or excess lines
-	 * @return string the fixed text
 	 */
 	private function processWhitespaceNewlines(string $text): string {
 
@@ -98,7 +88,7 @@ final class Html2Text {
 		// convert non-breaking spaces to regular spaces to prevent output issues,
 		// do it here so they do NOT get removed with other leading spaces, as they
 		// are sometimes used for indentation
-		$text = static::renderText($text);
+		$text = $this->renderText($text);
 
 		// remove trailing whitespace
 		$text = \rtrim($text);
@@ -176,22 +166,22 @@ final class Html2Text {
 	 * This is to match our goal of rendering documents as they would be rendered
 	 * by a browser.
 	 */
-	public static function renderText(string $text): string {
-		$text = \str_replace(static::nbspCodes(), " ", $text);
-		$text = \str_replace(static::zwnjCodes(), "", $text);
+	private function renderText(string $text): string {
+		$text = \str_replace(static::$nbsp_codes, " ", $text);
+		$text = \str_replace(static::$zwnj_codes, "", $text);
 		return $text;
 	}
 
-	public static function isWhitespace(string $text): bool {
-		return \strlen(\trim(static::renderText($text), "\n\r\t ")) === 0;
+	private function isWhitespace(string $text): bool {
+		return \strlen(\trim($this->renderText($text), "\n\r\t ")) === 0;
 	}
 
-	public static function nextChildName(\DOMNode $node): ?string {
+	private function nextChildName(\DOMNode $node): ?string {
 		// get the next child
 		$nextNode = $node->nextSibling;
-		while ($nextNode != null) {
+		while ($nextNode !== null) {
 			if ($nextNode instanceof \DOMText) {
-				if (!static::isWhitespace($nextNode->wholeText)) {
+				if (!$this->isWhitespace($nextNode->wholeText)) {
 					break;
 				}
 			}
@@ -204,7 +194,7 @@ final class Html2Text {
 		}
 
 		$nextName = null;
-		if (($nextNode instanceof \DOMElement || $nextNode instanceof \DOMText) && $nextNode != null) {
+		if (($nextNode instanceof \DOMElement || $nextNode instanceof \DOMText) && $nextNode !== null) {
 			$nextName = \strtolower($nextNode->nodeName);
 		}
 
@@ -224,7 +214,7 @@ final class Html2Text {
 		if ($node instanceof \DOMText) {
 		  // Replace whitespace characters with a space (equivilant to \s)
 			if ($in_pre) {
-				$text = "\n" . \trim(static::renderText($node->wholeText), "\n\r\t ") . "\n";
+				$text = "\n" . \trim($this->renderText($node->wholeText), "\n\r\t ") . "\n";
 
 				// Remove trailing whitespace only
 				$text = \preg_replace("/[ \t]*\n/im", "\n", $text);
@@ -233,10 +223,10 @@ final class Html2Text {
 				return \str_replace("\n", "\r", $text);
 
 			} else {
-				$text = static::renderText($node->wholeText);
+				$text = $this->renderText($node->wholeText);
 				$text = \preg_replace("/[\\t\\n\\f\\r ]+/im", " ", $text);
 
-				if (!static::isWhitespace($text) && ($prevName == 'p' || $prevName == 'div')) {
+				if (!$this->isWhitespace($text) && ($prevName === 'p' || $prevName === 'div')) {
 					return "\n" . $text;
 				}
 				return $text;
@@ -252,13 +242,13 @@ final class Html2Text {
 		$node as \DOMNode;
 
 		$name = \strtolower($node->nodeName);
-		$nextName = static::nextChildName($node);
+		$nextName = $this->nextChildName($node);
 
 		// start whitespace
 		switch ($name) {
 			case "hr":
 				$prefix = '';
-				if ($prevName != null) {
+				if ($prevName !== null) {
 					$prefix = "\n";
 				}
 				return $prefix . "---------------------------------------------------------------\n";
@@ -298,7 +288,7 @@ final class Html2Text {
 				// To fix this, for any p element with a className of `MsoNormal` (the standard
 				// classname in any Microsoft export or outlook for a paragraph that behaves
 				// like a line return) we skip the first line returns and set the name to br.
-				if ($is_office_document && $node->getAttribute('class') == 'MsoNormal') {
+				if ($is_office_document && $node->getAttribute('class') === 'MsoNormal') {
 					$output = "";
 					$name = 'br';
 					break;
@@ -343,15 +333,15 @@ final class Html2Text {
 			$parts = array();
 			$trailing_whitespace = 0;
 
-			while ($n != null) {
+			while ($n !== null) {
 
-				$text = $this->iterateOverNode($n, $previousSiblingName, $in_pre || $name == 'pre', $is_office_document, $options);
+				$text = $this->iterateOverNode($n, $previousSiblingName, $in_pre || $name === 'pre', $is_office_document, $options);
 
 				// Pass current node name to next child, as previousSibling does not appear to get populated
 				if ($n instanceof \DOMDocumentType
 					/* HH_FIXME[2049] */
 					|| $n instanceof \DOMProcessingInstruction
-					|| ($n instanceof \DOMText && static::isWhitespace($text))) {
+					|| ($n instanceof \DOMText && $this->isWhitespace($text))) {
 					// Keep current previousSiblingName, these are invisible
 					$trailing_whitespace++;
 				}
@@ -414,7 +404,7 @@ final class Html2Text {
 				$output = \trim($output);
 
 				// remove double [[ ]] s from linking images
-				if (\substr($output, 0, 1) == "[" && \substr($output, -1) == "]") {
+				if (\substr($output, 0, 1) === "[" && \substr($output, -1) === "]") {
 					$output = \substr($output, 1, \strlen($output) - 2);
 
 					// for linking images, the title of the <a> overrides the title of the <img>
@@ -428,9 +418,9 @@ final class Html2Text {
 					$output = $node->getAttribute("title");
 				}
 
-				if ($href == null) {
+				if ($href === null || $href === '') {
 					// it doesn't link anywhere
-					if ($node->getAttribute("name") != null) {
+					if ($node->getAttribute("name") !== null) {
 						if ($options['drop_links']) {
 							$output = "$output";
 						} else {
@@ -438,7 +428,7 @@ final class Html2Text {
 						}
 					}
 				} else {
-					if ($href == $output || $href == "mailto:$output" || $href == "http://$output" || $href == "https://$output") {
+					if ($href === $output || $href === "mailto:$output" || $href === "http://$output" || $href === "https://$output") {
 						// link to the same address: just use link
 						$output = "$output";
 					} else {
