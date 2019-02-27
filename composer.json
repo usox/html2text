@@ -6,11 +6,11 @@
   "homepage": "https://github.com/usox/html2text",
   "license": "MIT",
   "authors": [
-	{
-	  "name": "Daniel Jakob",
-	  "homepage": "https://github.com/usox",
-	  "role": "Developer"
-	}
+    {
+      "name": "Daniel Jakob",
+      "homepage": "https://github.com/usox",
+      "role": "Developer"
+    }
   ],
   "autoload": {
     "psr-4": {
@@ -22,7 +22,6 @@
   },
   "require": {
     "hhvm": "^4",
-    "ext-dom": "*",
     "ext-libxml": "*"
   },
   "require-dev": {
