@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92b1779b466551aab24cddd7f239a0c4",
+    "content-hash": "effe9b2b2c8b4cf83006b107f9b04d07",
     "packages": [],
     "packages-dev": [
         {
@@ -73,66 +73,6 @@
             ],
             "description": "Unit test helpers for Facebook projects",
             "time": "2019-02-14T22:40:45+00:00"
-        },
-        {
-            "name": "facebook/hack-codegen",
-            "version": "v4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hhvm/hack-codegen.git",
-                "reference": "542555d74bac08fe54fd3cf36847b8ed956000ad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hack-codegen/zipball/542555d74bac08fe54fd3cf36847b8ed956000ad",
-                "reference": "542555d74bac08fe54fd3cf36847b8ed956000ad",
-                "shasum": ""
-            },
-            "require": {
-                "hhvm": "^4.0.0",
-                "hhvm/hhvm-autoload": "^2.0",
-                "hhvm/hsl": "^4.0"
-            },
-            "require-dev": {
-                "facebook/difflib": "^1.0",
-                "facebook/fbexpect": "^2.1.0",
-                "hhvm/hacktest": "^1.0",
-                "hhvm/hhast": "^4.0",
-                "hhvm/type-assert": "^3.1"
-            },
-            "bin": [
-                "bin/hh-codegen-verify-signatures"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Drew Hoskins",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Gaurav Kumar",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Alejandro Marcu",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Matthieu Martin",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Fred Emmott",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Hack Codegen is a library for programatically generating Hack code",
-            "keywords": [
-                "code generation",
-                "hack"
-            ],
-            "time": "2019-02-21T22:38:07+00:00"
         },
         {
             "name": "facebook/hh-clilib",
@@ -414,59 +354,6 @@
                 "hack"
             ],
             "time": "2019-02-08T23:10:16+00:00"
-        },
-        {
-            "name": "usox/hackmock",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/usox/hackmock.git",
-                "reference": "c52fc17130fa6bfdf256a1c1323dede01355f5b1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/usox/hackmock/zipball/c52fc17130fa6bfdf256a1c1323dede01355f5b1",
-                "reference": "c52fc17130fa6bfdf256a1c1323dede01355f5b1",
-                "shasum": ""
-            },
-            "require": {
-                "facebook/fbexpect": "^2.3",
-                "facebook/hack-codegen": "^4",
-                "hhvm": "^4.0",
-                "hhvm/hacktest": "^1.4",
-                "hhvm/hsl": "^4.0",
-                "hhvm/type-assert": "^3.2"
-            },
-            "require-dev": {
-                "hhvm/hhast": "^4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Usox\\HackMock\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniel Jakob",
-                    "email": "dev@usox.org",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Mocking framework for hacklang",
-            "homepage": "https://github.com/usox/hackmock",
-            "keywords": [
-                "hack",
-                "hacklang",
-                "hhvm",
-                "mock",
-                "testing"
-            ],
-            "time": "2019-02-13T09:49:04+00:00"
         }
     ],
     "aliases": [],

@@ -32,7 +32,7 @@ class Html2TextTest extends HackTest {
 		$converter = new Html2Text();
 		$output = $converter->convert($input, $options);
 
-		if ($output != $expected) {
+		if ($output !== $expected) {
 			\file_put_contents(__DIR__ . "/$result.output", $output);
 		}
 

@@ -21,12 +21,13 @@
     }
   },
   "require": {
-	"hhvm": "^4",
+    "hhvm": "^4",
     "ext-dom": "*",
     "ext-libxml": "*"
   },
   "require-dev": {
-    "usox/hackmock": "^1",
+    "facebook/fbexpect": "^2.3",
+    "hhvm/hacktest": "^1.4",
     "hhvm/hhast": "^4.0"
   }
 }
