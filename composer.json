@@ -14,7 +14,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Usox\\HtmlToText\\": [
+      "Usox\\Html2Text\\": [
         "src/",
         "tests/"
       ]
